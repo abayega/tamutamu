@@ -24,9 +24,10 @@ export async function POST(req: Request) {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err: any) {
-    console.error('Webhook error:', err.message);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('Webhook error:', message);
+    return NextResponse.json({ error: `Webhook Error: ${message}` }, { status: 400 });
   }
 
   if (event.type === 'checkout.session.completed') {
@@ -52,8 +53,9 @@ export async function POST(req: Request) {
       });
 
       console.log('✅ Order saved to database', savedOrder);
-    } catch (err) {
-      console.error('❌ Failed to save order:', err);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      console.error('❌ Failed to save order:', message);
     }
   }
 

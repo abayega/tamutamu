@@ -38,8 +38,12 @@ export default function AddProductPage() {
     } else {
       setMessage(`❌ Error: ${data.error || 'Unknown error'}`);
     }
-  } catch (err: any) {
-    console.error('Form submit error:', err);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error('Form submit error:', err.message);
+    } else {
+      console.error('Form submit error:', err);
+    }
     setMessage('❌ Unexpected error during submission');
   }
 };

@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
+type OrderItem = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+};
+
 type Order = {
   id: number;
   email: string;
@@ -47,7 +54,7 @@ export default function AdminOrdersPage() {
               <p><strong>🛒 Items:</strong></p>
               <p className="text-sm text-gray-500">Date: {new Date(order.createdAt).toLocaleString()}</p>
               <ul className="mt-2 list-disc list-inside">
-                {JSON.parse(order.items).map((item: any, index: number) => (
+                {(JSON.parse(order.items) as OrderItem[]).map((item, index) => (
                   <li key={index}>
                     {item.name} × {item.quantity} — ${item.price.toFixed(2)}
                   </li>

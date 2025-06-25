@@ -4,7 +4,12 @@ import { NextResponse } from 'next/server';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-05-28.basil',
 });
-
+type CartItem = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+};
 export async function POST(req: Request) {
   try {
     const { cart, address } = await req.json();
@@ -17,7 +22,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Delivery address is missing or too short' }, { status: 400 });
     }
 
-    const line_items = cart.map((item: any) => ({
+    const line_items = (cart as CartItem[]).map((item) => ({
       price_data: {
         currency: 'cad',
         product_data: {
@@ -45,10 +50,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (err: any) {
-    console.error('❌ Checkout API Error:', err.message);
+  } catch (err: unknown) {
+    console.error('❌ Checkout API Error:', err instanceof Error ? err.message : err);
     return NextResponse.json(
-      { error: 'Internal server error: ' + err.message },
+      { error: 'Internal server error: ' },
       { status: 500 }
     );
   }

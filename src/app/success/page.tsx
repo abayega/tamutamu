@@ -9,7 +9,6 @@ export default function SuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [status, setStatus] = useState('loading');
-  const router = useRouter();
 
   useEffect(() => {
     const saveOrder = async () => {

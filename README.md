@@ -1,2 +1,0 @@
-# tamutamu
-African grocery store

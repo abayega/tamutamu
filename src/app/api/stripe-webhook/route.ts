@@ -26,18 +26,25 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
 
     try {
-      const email = session.customer_email || 'guest@example.com';
+      const email = session.customer_details?.email || 'guest@example.com';
+      const amount = (session.amount_total || 0)/100;
+      //const address = session.customer_details?.address?.line1 || 'Unknown address';
+      const address = session.metadata?.address || 'Unknown address';
       const items = JSON.parse(session.metadata?.cart || '[]');
-      const amount = session.amount_total || 0;
+      const name = session.customer_details?.name || session.metadata?.name || 'Guest';
+      const phone = session.customer_details?.phone || session.metadata?.phone || null;
 
-      await prisma.order.create({
-        data: {
-          email,
-          amount,
-          items: JSON.stringify(items), // ✅ stringify the cart array,
-          address: session.customer_details?.address?.line1 || 'Unknown address',
-          stripeSessionId: session.id,
-        },
+
+    await prisma.order.create({
+      data: {
+        email,
+        amount,
+        name,
+        phone,
+        items: JSON.stringify(items),
+        address,
+        stripeSessionId: session.id,
+      },
       });
 
       console.log('✅ Order saved to database');

@@ -35,20 +35,25 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     //console.log('✅ Stripe checkout completed:', session);
 
-    const email = session.customer_email || 'unknown';
-    const amount = session.amount_total || 0;
+    const email = session.customer_details?.email || 'guest@example.com';
+    const amount = (session.amount_total || 0)/100;
+    //const address = session.customer_details?.address?.line1 || 'Unknown address';
+    const address = session.metadata?.address || 'Unknown address';
+    const items = JSON.parse(session.metadata?.cart || '[]');
+    const name = session.customer_details?.name || session.metadata?.name || 'Guest';
+    const phone = session.customer_details?.phone || session.metadata?.phone || null;
     const stripeSessionId = session.id;
-    const address = session.metadata?.address || 'No address provided';
-    const cartJSON = session.metadata?.cart || '[]';
 
     try {
       const savedOrder = await prisma.order.create({
         data: {
           email,
           amount,
+          name,
+          phone,
+          items: JSON.stringify(items),
           address,
           stripeSessionId,
-          items: cartJSON, // optional: store full cart as raw JSON string
         },
       });
 

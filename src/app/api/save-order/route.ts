@@ -4,11 +4,13 @@ import { prisma } from '../../../../lib/prisma';
 
 export async function POST(req: Request) {
   try {
-    const { email, items, amount, address, stripeSessionId } = await req.json();
+    const { email, items, name, phone, amount, address, stripeSessionId } = await req.json();
 
     const order = await prisma.order.create({
       data: {
         email,
+        name,
+        phone,       // ✅ add if in schema
         items: JSON.stringify(items),
         amount,
         address,

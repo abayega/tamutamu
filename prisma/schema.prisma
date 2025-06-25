@@ -20,7 +20,7 @@ model Order {
   address         String
   stripeSessionId String
   items           String   // Stored as JSON string
-  name            String
+  name            String?
   phone           String?
   createdAt       DateTime @default(now())
 }

@@ -1,3 +1,4 @@
+// app/api/get-orders/route.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
 
@@ -6,9 +7,9 @@ export async function GET() {
     const orders = await prisma.order.findMany({
       orderBy: { createdAt: 'desc' },
     });
-    return NextResponse.json(orders);
+    return NextResponse.json({ success: true, orders });
   } catch (error) {
-    console.error('Failed to fetch orders:', error);
-    return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
